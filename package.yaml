@@ -14,6 +14,20 @@ extra-source-files:
 dependencies:
   - base >= 4.7 && < 5
 
+tests:
+  test: 
+    source-dirs: 
+      - test
+    main: Test.hs
+    dependencies: 
+      - base
+      - tasty 
+      - tasty-hunit
+      - tasty-smallcheck 
+      - tasty-quickcheck
+      - tasty-hspec
+      - HaskellBindElm
+
 executables:
   HaskellBindElm:
     source-dirs:      src

@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: fa2e11baf7ad4463c2c86567839ac1e42e7191a86cf13e48eb78f9600aefaafc
+-- hash: f02cf11e050f3e8118eb45848f33a5c90ab34355dfe32a7dc2a8471d5a23130a
 
 name:           HaskellBindElm
 version:        0.1.0.0
@@ -25,6 +25,23 @@ executable HaskellBindElm
       src
   build-depends:
       base >=4.7 && <5
+  other-modules:
+      Paths_HaskellBindElm
+  default-language: Haskell2010
+
+test-suite test
+  type: exitcode-stdio-1.0
+  main-is: Test.hs
+  hs-source-dirs:
+      test
+  build-depends:
+      HaskellBindElm
+    , base
+    , tasty
+    , tasty-hspec
+    , tasty-hunit
+    , tasty-quickcheck
+    , tasty-smallcheck
   other-modules:
       Paths_HaskellBindElm
   default-language: Haskell2010

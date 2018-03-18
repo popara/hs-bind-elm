@@ -1,4 +1,4 @@
-* Haskell >>= Elm (Haskell And Then Elm)
+* Haskell >>= Elm (Haskell Bind Elm)
 
 The goal of the project is to provide seamless integration of Haskell and Elm in a project. The goal has 3 separate layers: 
 
@@ -10,10 +10,10 @@ The goal of the project is to provide seamless integration of Haskell and Elm in
 *** Values
 **** Predictable behavior
 **** Friendly Error Messages
-**** Ability to hadle and act upon error messages
+**** We are here to reduce stress of the user
 *** How to use it
 
-Install it.
+Install it, build it, add it as dependency.
 Hook it up with your build system.
 
 *** Layer One
@@ -28,6 +28,7 @@ module Data.Example
   ) where
 
 import Data.TreeSeed
+import Data.Color
 import qualified Data.Text as T
 import qualified Data.ByteString as BS
 
@@ -42,7 +43,17 @@ data Sljiva = Sljiva
 data Fruit
   = Banana
   | Raspberry
-  deriving(Show)
+  | Lemon Color
+  deriving(Show, Generic)
+
+data Being a b = Being 
+  { a :: a
+  , b :: b
+  } deriving (Eq, Show)
+
+type PrinterTags = [String]
+
+newtype SweetFruit = SweetFruit { unSweetFruit :: Fruit }
 
 #+END_SRC
 
@@ -61,6 +72,7 @@ This will generate Elm files according the module structure of the designated fi
 module Data.Example exposing (Sljiva, Fruit)
 
 import Data.TreeSeed
+import Data.Color
 
 type alias Sljiva =
   { radius  : Int
@@ -73,6 +85,23 @@ type alias Sljiva =
 type Fruit
   = Banana
   | Raspberry
+  | Lemon Color
+
+type alias Being a b =
+  { a : a
+  , b : b
+  }
+
+
+type alias PrinterTags = List String
+
+type alias SweetFruit 
+  = { unSweetFruit : Fruit }
+
+unSweetFruit : SweetFruit -> Fruit
+unSweetFruit a = 
+  a.unSweetFruit
+
 #+END_SRC
 
 Notice that there are couple of important features:
@@ -83,3 +112,12 @@ The tool will lookup imports, if modules can be read, we will convert needed bit
 If module is from outside dependency, we provide way of mapping Haskell types into Elm types, in src_shell{ .hs2elm } configuration file.
 **** Exposing same types
 We try to remove barrier of thinking, when converting from Haskell to Elm.
+**** New types are records with ~un~ prefix
+This way there is smaller runtime impact on the unwrapping the value of underlaying type.
+src_elm{type X = X { unX : Int } } would require ~casing~ everytime we want to peak into the value of hidden type.
+
+
+*** TODO Layer Two
+TBD
+*** TODO Layer Three
+TBD
