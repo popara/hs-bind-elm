@@ -1,0 +1,85 @@
+* Haskell >>= Elm (Haskell And Then Elm)
+
+The goal of the project is to provide seamless integration of Haskell and Elm in a project. The goal has 3 separate layers: 
+
+1. Generating Elm data types out of Haskell data types, reflecting module structure. 
+2. Generating decoders and encoders so that backend and frontend can communicate seamlessly.
+3. Generating Elm-Servant Client as a module that hides complexity of frontend <-> backend communication
+
+** Design (Nothing of this exists)
+*** Values
+**** Predictable behavior
+**** Friendly Error Messages
+**** Ability to hadle and act upon error messages
+*** How to use it
+
+Install it.
+Hook it up with your build system.
+
+*** Layer One
+Then lets make a simple usage example of Layer One.
+
+#+NAME:Data.Example.hs
+#+BEGIN_SRC haskell
+-- >>= Elm --- <<< THIS IS IMPORTANT COMMENT THAT HELPS US IDENTIFY WHICH FILES TO TRY TO CONVERT
+module Data.Example 
+  ( Sljiva
+  , Fruit(..)
+  ) where
+
+import Data.TreeSeed
+import qualified Data.Text as T
+import qualified Data.ByteString as BS
+
+data Sljiva = Sljiva
+  { radius  :: Int
+  , weight  :: Double 
+  , name    :: T.Text
+  , licence :: BS.ByteString
+  , seed    :: TreeSeed
+  }
+
+data Fruit
+  = Banana
+  | Raspberry
+  deriving(Show)
+
+#+END_SRC
+
+After running from CLI in project root
+
+#+NAME:CLI Usage
+#+BEGIN_SRC shell
+   hs-bind-elm [opts ...]
+#+END_SRC
+
+This will generate Elm files according the module structure of the designated file:
+
+#+NAME:Data.Example.elm
+#+BEGIN_SRC elm
+-- >>= Elm -- This comment will designate that the file has been generated with hs-bind-elm
+module Data.Example exposing (Sljiva, Fruit)
+
+import Data.TreeSeed
+
+type alias Sljiva =
+  { radius  : Int
+  , weight  : Float
+  , name    : String
+  , licence : String
+  , seed    : TreeSeed
+  } 
+
+type Fruit
+  = Banana
+  | Raspberry
+#+END_SRC
+
+Notice that there are couple of important features:
+**** Reduction to String 
+All data types that can represent String will be String in Elm files. Text, ByteString, String, CString will become all Strings
+**** Replacing Imports
+The tool will lookup imports, if modules can be read, we will convert needed bits to Elm. 
+If module is from outside dependency, we provide way of mapping Haskell types into Elm types, in src_shell{ .hs2elm } configuration file.
+**** Exposing same types
+We try to remove barrier of thinking, when converting from Haskell to Elm.
